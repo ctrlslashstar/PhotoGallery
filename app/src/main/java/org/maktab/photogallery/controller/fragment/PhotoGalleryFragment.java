@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,14 +15,22 @@ import android.widget.TextView;
 
 import org.maktab.photogallery.R;
 import org.maktab.photogallery.model.GalleryItem;
+import org.maktab.photogallery.network.FlickrFetcher;
+import org.maktab.photogallery.repository.PhotoRepository;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class PhotoGalleryFragment extends Fragment {
 
     private static final int SPAN_COUNT = 3;
+    private static final String TAG = "PGF";
     private RecyclerView mRecyclerView;
+    private PhotoRepository mRepository;
+
+    private TextView mTextView;
+    private String mResponse;
 
     public PhotoGalleryFragment() {
         // Required empty public constructor
@@ -37,6 +46,29 @@ public class PhotoGalleryFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        mRepository = new PhotoRepository();
+
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                FlickrFetcher flickrFetcher = new FlickrFetcher();
+                try {
+                    String response = flickrFetcher.getUrlString("https://www.digikala.com/");
+                    Log.d(TAG, response);
+
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mTextView.setText(response);
+                        }
+                    });
+                } catch (IOException e) {
+                    Log.e(TAG, e.getMessage(), e);
+                }
+            }
+        });
+        thread.start();
     }
 
     @Override
@@ -55,6 +87,7 @@ public class PhotoGalleryFragment extends Fragment {
 
     private void findViews(View view) {
         mRecyclerView = view.findViewById(R.id.recycler_view_photo_gallery);
+        mTextView = view.findViewById(R.id.txtview_response);
     }
 
     private void initViews() {
@@ -62,7 +95,8 @@ public class PhotoGalleryFragment extends Fragment {
     }
 
     private void setupAdapter() {
-        PhotoAdapter adapter = new PhotoAdapter(new ArrayList<>());
+        List<GalleryItem> items = mRepository.getItems();
+        PhotoAdapter adapter = new PhotoAdapter(items);
         mRecyclerView.setAdapter(adapter);
     }
 
