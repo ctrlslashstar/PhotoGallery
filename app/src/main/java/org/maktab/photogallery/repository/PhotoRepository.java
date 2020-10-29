@@ -21,6 +21,7 @@ public class PhotoRepository {
         mFetcher = new FlickrFetcher();
     }
 
+    //this method must run on background thread.
     public List<GalleryItem> fetchItems() {
         String url = mFetcher.getRecentUrl();
         try {

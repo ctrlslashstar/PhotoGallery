@@ -1,13 +1,11 @@
 package org.maktab.photogallery.network;
 
 import android.net.Uri;
-import android.util.Log;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 public class FlickrFetcher {
@@ -22,7 +20,6 @@ public class FlickrFetcher {
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         try {
             InputStream inputStream = connection.getInputStream();
-
             if (connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
                 throw new IOException(connection.getResponseMessage() + ": with " + urlSpec);
             }
