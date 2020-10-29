@@ -1,5 +1,6 @@
 package org.maktab.photogallery.controller.fragment;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -29,9 +30,6 @@ public class PhotoGalleryFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private PhotoRepository mRepository;
 
-    private TextView mTextView;
-    private String mResponse;
-
     public PhotoGalleryFragment() {
         // Required empty public constructor
     }
@@ -49,7 +47,10 @@ public class PhotoGalleryFragment extends Fragment {
 
         mRepository = new PhotoRepository();
 
-        Thread thread = new Thread(new Runnable() {
+        FlickrTask flickrTask = new FlickrTask();
+        flickrTask.execute();
+
+        /*Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
                 FlickrFetcher flickrFetcher = new FlickrFetcher();
@@ -68,7 +69,7 @@ public class PhotoGalleryFragment extends Fragment {
                 }
             }
         });
-        thread.start();
+        thread.start();*/
     }
 
     @Override
@@ -80,22 +81,18 @@ public class PhotoGalleryFragment extends Fragment {
         findViews(view);
         initViews();
 
-        setupAdapter();
-
         return view;
     }
 
     private void findViews(View view) {
         mRecyclerView = view.findViewById(R.id.recycler_view_photo_gallery);
-        mTextView = view.findViewById(R.id.txtview_response);
     }
 
     private void initViews() {
         mRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), SPAN_COUNT));
     }
 
-    private void setupAdapter() {
-        List<GalleryItem> items = mRepository.getItems();
+    private void setupAdapter(List<GalleryItem> items) {
         PhotoAdapter adapter = new PhotoAdapter(items);
         mRecyclerView.setAdapter(adapter);
     }
@@ -148,6 +145,24 @@ public class PhotoGalleryFragment extends Fragment {
         @Override
         public int getItemCount() {
             return mItems.size();
+        }
+    }
+
+    private class FlickrTask extends AsyncTask<Void, Void, List<GalleryItem>> {
+
+        //this method runs on background thread
+        @Override
+        protected List<GalleryItem> doInBackground(Void... voids) {
+            List<GalleryItem> items = mRepository.fetchItems();
+            return items;
+        }
+
+        //this method run on main thread
+        @Override
+        protected void onPostExecute(List<GalleryItem> items) {
+            super.onPostExecute(items);
+
+            setupAdapter(items);
         }
     }
 }
