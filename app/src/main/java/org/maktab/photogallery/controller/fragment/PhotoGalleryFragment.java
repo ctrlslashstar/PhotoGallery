@@ -77,7 +77,6 @@ public class PhotoGalleryFragment extends Fragment {
     private class PhotoHolder extends RecyclerView.ViewHolder {
 
         private ImageView mImageViewItem;
-        private GalleryItem mItem;
 
         public PhotoHolder(@NonNull View itemView) {
             super(itemView);
@@ -86,8 +85,6 @@ public class PhotoGalleryFragment extends Fragment {
         }
 
         public void bindGalleryItem(GalleryItem item) {
-            mItem = item;
-
             Picasso.get()
                     .load(item.getUrl())
                     .placeholder(R.mipmap.ic_android_placeholder)
