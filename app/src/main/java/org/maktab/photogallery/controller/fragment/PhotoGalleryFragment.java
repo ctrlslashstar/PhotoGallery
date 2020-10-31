@@ -1,5 +1,6 @@
 package org.maktab.photogallery.controller.fragment;
 
+import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
@@ -8,16 +9,19 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.maktab.photogallery.R;
 import org.maktab.photogallery.model.GalleryItem;
 import org.maktab.photogallery.network.FlickrFetcher;
 import org.maktab.photogallery.repository.PhotoRepository;
+import org.maktab.photogallery.services.ThumbnailDownloader;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -29,6 +33,10 @@ public class PhotoGalleryFragment extends Fragment {
     private static final String TAG = "PGF";
     private RecyclerView mRecyclerView;
     private PhotoRepository mRepository;
+
+    private Handler mHandlerUI;
+
+    private ThumbnailDownloader<PhotoHolder> mThumbnailDownloader;
 
     public PhotoGalleryFragment() {
         // Required empty public constructor
@@ -50,6 +58,13 @@ public class PhotoGalleryFragment extends Fragment {
         FlickrTask flickrTask = new FlickrTask();
         flickrTask.execute();
 
+        mHandlerUI = new Handler();
+
+        mThumbnailDownloader = new ThumbnailDownloader();
+        mThumbnailDownloader.start();
+        mThumbnailDownloader.getLooper();
+        mThumbnailDownloader.setHandlerResponse(mHandlerUI);
+
         /*Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -70,6 +85,13 @@ public class PhotoGalleryFragment extends Fragment {
             }
         });
         thread.start();*/
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        mThumbnailDownloader.quit();
     }
 
     @Override
@@ -97,20 +119,29 @@ public class PhotoGalleryFragment extends Fragment {
         mRecyclerView.setAdapter(adapter);
     }
 
-    private class PhotoHolder extends RecyclerView.ViewHolder {
+    public class PhotoHolder extends RecyclerView.ViewHolder {
 
-        private TextView mTextView;
+        private ImageView mImageViewItem;
         private GalleryItem mItem;
 
         public PhotoHolder(@NonNull View itemView) {
             super(itemView);
 
-            mTextView = (TextView) itemView;
+            mImageViewItem = itemView.findViewById(R.id.item_image_view);
         }
 
         public void bindGalleryItem(GalleryItem item) {
             mItem = item;
-            mTextView.setText(mItem.getTitle());
+
+            mImageViewItem.setImageDrawable(
+                    getResources().getDrawable(R.mipmap.ic_android_placeholder));
+
+            //queue the message for download
+            mThumbnailDownloader.queueThumbnail(this, item.getUrl());
+        }
+
+        public void bindBitmap(Bitmap bitmap) {
+            mImageViewItem.setImageBitmap(bitmap);
         }
     }
 
@@ -133,8 +164,11 @@ public class PhotoGalleryFragment extends Fragment {
         @NonNull
         @Override
         public PhotoHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            TextView textView = new TextView(getContext());
-            return new PhotoHolder(textView);
+            View view = LayoutInflater.from(getContext()).inflate(
+                    R.layout.list_item_photo_gallery,
+                    parent,
+                    false);
+            return new PhotoHolder(view);
         }
 
         @Override

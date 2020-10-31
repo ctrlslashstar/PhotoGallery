@@ -17,13 +17,23 @@ public class PhotoRepository {
     private static final String TAG = "PhotoRepository";
     private FlickrFetcher mFetcher;
 
+    private List<GalleryItem> mItems;
+
+    public List<GalleryItem> getItems() {
+        return mItems;
+    }
+
+    public void setItems(List<GalleryItem> items) {
+        mItems = items;
+    }
+
     public PhotoRepository() {
         mFetcher = new FlickrFetcher();
     }
 
     //this method must run on background thread.
     public List<GalleryItem> fetchItems() {
-        String url = mFetcher.getRecentUrl();
+        String url = mFetcher.getPopularUrl();
         try {
             String response = mFetcher.getUrlString(url);
             Log.d(TAG, "response: " + response);
