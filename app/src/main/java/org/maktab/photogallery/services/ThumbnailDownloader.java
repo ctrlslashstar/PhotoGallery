@@ -9,12 +9,9 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import org.maktab.photogallery.controller.fragment.PhotoGalleryFragment;
 import org.maktab.photogallery.network.FlickrFetcher;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ThumbnailDownloader<T> extends HandlerThread {
@@ -26,16 +23,20 @@ public class ThumbnailDownloader<T> extends HandlerThread {
     private Handler mHandlerResponse;
     private ConcurrentHashMap<T, String> mRequestMap = new ConcurrentHashMap<>();
 
-    public Handler getHandlerResponse() {
-        return mHandlerResponse;
+    private ThumbnailDownloaderListener mListener;
+
+    public ThumbnailDownloaderListener getListener() {
+        return mListener;
     }
 
-    public void setHandlerResponse(Handler handlerResponse) {
-        mHandlerResponse = handlerResponse;
+    public void setListener(ThumbnailDownloaderListener listener) {
+        mListener = listener;
     }
 
-    public ThumbnailDownloader() {
+    public ThumbnailDownloader(Handler uiHandler) {
         super(TAG);
+
+        mHandlerResponse = uiHandler;
     }
 
     @Override
@@ -50,7 +51,15 @@ public class ThumbnailDownloader<T> extends HandlerThread {
 
                 //download url from net
                 try {
-                    handleDownloadMessage(msg);
+                    if (msg.what == WHAT_THUMBNAIL_DOWNLOAD) {
+                        if (msg.obj == null)
+                            return;
+
+                        T target = (T) msg.obj;
+                        String url = mRequestMap.get(target);
+
+                        handleDownloadMessage(target, url);
+                    }
                 } catch (IOException e) {
                     Log.e(TAG, e.getMessage(), e);
                 }
@@ -58,32 +67,25 @@ public class ThumbnailDownloader<T> extends HandlerThread {
         };
     }
 
-    private void handleDownloadMessage(@NonNull Message msg) throws IOException {
-        if (msg.what == WHAT_THUMBNAIL_DOWNLOAD) {
-            if (msg.obj == null)
-                return;
+    private void handleDownloadMessage(T target, String url) throws IOException {
+        if (url == null)
+            return;
 
-            T target = (T) msg.obj;
-            String url = mRequestMap.get(target);
+        FlickrFetcher flickrFetcher = new FlickrFetcher();
+        byte[] bitmapBytes = flickrFetcher.getUrlBytes(url);
 
-            FlickrFetcher flickrFetcher = new FlickrFetcher();
-            byte[] bitmapBytes = flickrFetcher.getUrlBytes(url);
+        Bitmap bitmap = BitmapFactory.decodeByteArray(bitmapBytes, 0, bitmapBytes.length);
 
-            Bitmap bitmap = BitmapFactory.decodeByteArray(bitmapBytes, 0, bitmapBytes.length);
+        mHandlerResponse.post(new Runnable() {
+            @Override
+            public void run() {
+                if (mRequestMap.get(target) != url)
+                    return;
 
-            mHandlerResponse.post(new Runnable() {
-                @Override
-                public void run() {
-                    if (mRequestMap.get(target) != url)
-                        return;
-
-                    if (target instanceof PhotoGalleryFragment.PhotoHolder) {
-                        PhotoGalleryFragment.PhotoHolder photoHolder = (PhotoGalleryFragment.PhotoHolder) target;
-                        photoHolder.bindBitmap(bitmap);
-                    }
-                }
-            });
-        }
+                mListener.onThumbnailDownloaded(target, bitmap);
+//                mRequestMap.remove(target);
+            }
+        });
     }
 
     public void queueThumbnail(T target, String url) {
@@ -92,5 +94,13 @@ public class ThumbnailDownloader<T> extends HandlerThread {
         //create a message and send it to looper (to put in queue)
         Message message = mHandlerRequest.obtainMessage(WHAT_THUMBNAIL_DOWNLOAD, target);
         message.sendToTarget();
+    }
+
+    public void clearQueue() {
+        mHandlerRequest.removeMessages(WHAT_THUMBNAIL_DOWNLOAD);
+    }
+
+    public interface ThumbnailDownloaderListener<T> {
+        void onThumbnailDownloaded(T target, Bitmap bitmap);
     }
 }

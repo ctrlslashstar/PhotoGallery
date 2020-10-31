@@ -34,8 +34,6 @@ public class PhotoGalleryFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private PhotoRepository mRepository;
 
-    private Handler mHandlerUI;
-
     private ThumbnailDownloader<PhotoHolder> mThumbnailDownloader;
 
     public PhotoGalleryFragment() {
@@ -58,12 +56,18 @@ public class PhotoGalleryFragment extends Fragment {
         FlickrTask flickrTask = new FlickrTask();
         flickrTask.execute();
 
-        mHandlerUI = new Handler();
+        Handler uiHandler = new Handler();
 
-        mThumbnailDownloader = new ThumbnailDownloader();
+        mThumbnailDownloader = new ThumbnailDownloader(uiHandler);
         mThumbnailDownloader.start();
         mThumbnailDownloader.getLooper();
-        mThumbnailDownloader.setHandlerResponse(mHandlerUI);
+        mThumbnailDownloader.setListener(
+                new ThumbnailDownloader.ThumbnailDownloaderListener<PhotoHolder>() {
+            @Override
+            public void onThumbnailDownloaded(PhotoHolder target, Bitmap bitmap) {
+                target.bindBitmap(bitmap);
+            }
+        });
 
         /*Thread thread = new Thread(new Runnable() {
             @Override
@@ -92,6 +96,13 @@ public class PhotoGalleryFragment extends Fragment {
         super.onDestroy();
 
         mThumbnailDownloader.quit();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+        mThumbnailDownloader.clearQueue();
     }
 
     @Override
