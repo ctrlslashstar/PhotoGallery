@@ -19,7 +19,7 @@ public class PhotoRepository {
 
     private static final String TAG = "PhotoRepository";
 
-    private FlickrService mFlickrService;
+    private final FlickrService mFlickrService;
 
     public PhotoRepository() {
         Retrofit retrofit = RetrofitInstance.getInstance().getRetrofit();
