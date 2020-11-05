@@ -1,6 +1,5 @@
 package org.maktab.photogallery.controller.fragment;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -45,8 +44,15 @@ public class PhotoGalleryFragment extends Fragment {
 
         mRepository = new PhotoRepository();
 
-        FlickrTask flickrTask = new FlickrTask();
-        flickrTask.execute();
+        /*FlickrTask flickrTask = new FlickrTask();
+        flickrTask.execute();*/
+
+        mRepository.fetchItemsAsync(new PhotoRepository.Callbacks() {
+            @Override
+            public void onItemResponse(List<GalleryItem> items) {
+                setupAdapter(items);
+            }
+        });
     }
 
     @Override
@@ -129,7 +135,7 @@ public class PhotoGalleryFragment extends Fragment {
         }
     }
 
-    private class FlickrTask extends AsyncTask<Void, Void, List<GalleryItem>> {
+    /*private class FlickrTask extends AsyncTask<Void, Void, List<GalleryItem>> {
 
         //this method runs on background thread
         @Override
@@ -145,5 +151,5 @@ public class PhotoGalleryFragment extends Fragment {
 
             setupAdapter(items);
         }
-    }
+    }*/
 }
