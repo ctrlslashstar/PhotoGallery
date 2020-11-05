@@ -16,11 +16,13 @@ import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Response;
+import retrofit2.Retrofit;
 
 public class PhotoRepository {
 
     private static final String TAG = "PhotoRepository";
 
+    private Retrofit mRetrofit;
     private FlickrService mFlickrService;
 
     private List<GalleryItem> mItems;
@@ -34,43 +36,24 @@ public class PhotoRepository {
     }
 
     public PhotoRepository() {
-        mFlickrService = RetrofitInstance.getInstance().create(FlickrService.class);
+        mRetrofit = RetrofitInstance.getInstance();
+        mFlickrService = mRetrofit.create(FlickrService.class);
     }
 
     //this method must run on background thread.
     public List<GalleryItem> fetchItems() {
-        Call<FlickrResponse> call = mFlickrService.listItems(NetworkParams.POPULAR_OPTIONS);
-        List<GalleryItem> items = new ArrayList<>();
+        Call<List<GalleryItem>> call = mFlickrService.listItems(NetworkParams.POPULAR_OPTIONS);
         try {
-            Response<FlickrResponse> response = call.execute();
-            FlickrResponse flickrResponse = response.body();
-
-            for (PhotoItem photoItem: flickrResponse.getPhotos().getPhoto()) {
-                GalleryItem item = new GalleryItem(
-                        photoItem.getId(),
-                        photoItem.getTitle(),
-                        photoItem.getUrlS());
-
-                items.add(item);
-            }
+            Response<List<GalleryItem>> response = call.execute();
+            return response.body();
         } catch (IOException e) {
             Log.e(TAG, e.getMessage(), e);
-        } finally {
-            return items;
-        }
-
-        /*String url = mFetcher.getPopularUrl();
-        try {
-            String response = mFetcher.getUrlString(url);
-            Log.d(TAG, "response: " + response);
-
-            JSONObject bodyObject = new JSONObject(response);
-            List<GalleryItem> items = parseJson(bodyObject);
-            return items;
-        } catch (IOException | JSONException e) {
-            Log.e(TAG, e.getMessage(), e);
             return null;
-        }*/
+        }
+    }
+
+    public void fetchItemsAsync() {
+
     }
 
     /*private List<GalleryItem> parseJson(JSONObject bodyObject) throws JSONException {
