@@ -2,6 +2,8 @@ package org.maktab.photogallery.repository;
 
 import android.util.Log;
 
+import androidx.lifecycle.MutableLiveData;
+
 import org.maktab.photogallery.model.GalleryItem;
 import org.maktab.photogallery.network.NetworkParams;
 import org.maktab.photogallery.network.retrofit.FlickrService;
@@ -20,6 +22,11 @@ public class PhotoRepository {
     private static final String TAG = "PhotoRepository";
 
     private final FlickrService mFlickrService;
+    private MutableLiveData<List<GalleryItem>> mPopularItemsLiveData = new MutableLiveData<>();
+
+    public MutableLiveData<List<GalleryItem>> getPopularItemsLiveData() {
+        return mPopularItemsLiveData;
+    }
 
     public PhotoRepository() {
         Retrofit retrofit = RetrofitInstance.getInstance().getRetrofit();
@@ -39,24 +46,24 @@ public class PhotoRepository {
     }
 
     //this method can be run in any thread.
-    public void fetchItemsAsync(Callbacks callBacks) {
+    public void fetchItemsAsync() {
         Call<List<GalleryItem>> call = mFlickrService.listItems(NetworkParams.POPULAR_OPTIONS);
         call.enqueue(new Callback<List<GalleryItem>>() {
+
+            //this run on main thread
             @Override
             public void onResponse(Call<List<GalleryItem>> call, Response<List<GalleryItem>> response) {
                 List<GalleryItem> items = response.body();
+
                 //update adapter of recyclerview
-                callBacks.onItemResponse(items);
+                mPopularItemsLiveData.setValue(items);
             }
 
+            //this run on main thread
             @Override
             public void onFailure(Call<List<GalleryItem>> call, Throwable t) {
                 Log.e(TAG, t.getMessage(), t);
             }
         });
-    }
-
-    public interface Callbacks {
-        void onItemResponse(List<GalleryItem> items);
     }
 }

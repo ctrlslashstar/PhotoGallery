@@ -1,4 +1,4 @@
-package org.maktab.photogallery.controller.activity;
+package org.maktab.photogallery.view.activity;
 
 import android.os.Bundle;
 
