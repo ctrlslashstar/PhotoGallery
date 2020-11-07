@@ -11,6 +11,14 @@ import retrofit2.http.QueryMap;
 
 public interface FlickrService {
 
+    //flickr is this way exceptionally. please please do not do this for other api.
     @GET(".")
     Call<List<GalleryItem>> listItems(@QueryMap Map<String, String> options);
+
+    //example: spotify api
+    /*@GET("albums")
+    Call<List<Album>> listAlbums();
+
+    @GET("albums/{id}")
+    Call<Album> getAlbum(@Path("id") String id);*/
 }

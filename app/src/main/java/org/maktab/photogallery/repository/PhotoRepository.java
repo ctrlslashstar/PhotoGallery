@@ -10,6 +10,7 @@ import org.maktab.photogallery.network.retrofit.FlickrService;
 import org.maktab.photogallery.network.retrofit.RetrofitInstance;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 
 import retrofit2.Call;
@@ -22,10 +23,15 @@ public class PhotoRepository {
     private static final String TAG = "PhotoRepository";
 
     private final FlickrService mFlickrService;
-    private MutableLiveData<List<GalleryItem>> mPopularItemsLiveData = new MutableLiveData<>();
+    private final MutableLiveData<List<GalleryItem>> mPopularItemsLiveData = new MutableLiveData<>();
+    private final MutableLiveData<List<GalleryItem>> mSearchItemsLiveData = new MutableLiveData<>();
 
     public MutableLiveData<List<GalleryItem>> getPopularItemsLiveData() {
         return mPopularItemsLiveData;
+    }
+
+    public MutableLiveData<List<GalleryItem>> getSearchItemsLiveData() {
+        return mSearchItemsLiveData;
     }
 
     public PhotoRepository() {
@@ -35,7 +41,7 @@ public class PhotoRepository {
 
     //this method must run on background thread.
     public List<GalleryItem> fetchItems() {
-        Call<List<GalleryItem>> call = mFlickrService.listItems(NetworkParams.POPULAR_OPTIONS);
+        Call<List<GalleryItem>> call = mFlickrService.listItems(NetworkParams.getPopularOptions());
         try {
             Response<List<GalleryItem>> response = call.execute();
             return response.body();
@@ -46,8 +52,10 @@ public class PhotoRepository {
     }
 
     //this method can be run in any thread.
-    public void fetchItemsAsync() {
-        Call<List<GalleryItem>> call = mFlickrService.listItems(NetworkParams.POPULAR_OPTIONS);
+    public void fetchPopularItemsAsync() {
+        Call<List<GalleryItem>> call =
+                mFlickrService.listItems(NetworkParams.getPopularOptions());
+
         call.enqueue(new Callback<List<GalleryItem>>() {
 
             //this run on main thread
@@ -57,6 +65,29 @@ public class PhotoRepository {
 
                 //update adapter of recyclerview
                 mPopularItemsLiveData.setValue(items);
+            }
+
+            //this run on main thread
+            @Override
+            public void onFailure(Call<List<GalleryItem>> call, Throwable t) {
+                Log.e(TAG, t.getMessage(), t);
+            }
+        });
+    }
+
+    public void fetchSearchItemsAsync(String query) {
+        Call<List<GalleryItem>> call =
+                mFlickrService.listItems(NetworkParams.getSearchOptions(query));
+
+        call.enqueue(new Callback<List<GalleryItem>>() {
+
+            //this run on main thread
+            @Override
+            public void onResponse(Call<List<GalleryItem>> call, Response<List<GalleryItem>> response) {
+                List<GalleryItem> items = response.body();
+
+                //update adapter of recyclerview
+                mSearchItemsLiveData.setValue(items);
             }
 
             //this run on main thread

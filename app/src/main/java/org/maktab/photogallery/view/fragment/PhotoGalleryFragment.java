@@ -2,9 +2,14 @@ package org.maktab.photogallery.view.fragment;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.SearchView;
 
+import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
@@ -42,16 +47,12 @@ public class PhotoGalleryFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
 
         mViewModel = new ViewModelProvider(this).get(PhotoGalleryViewModel.class);
 
         mViewModel.fetchPopularItemsAsync();
-        mViewModel.getPopularItemsLiveData().observe(this, new Observer<List<GalleryItem>>() {
-            @Override
-            public void onChanged(List<GalleryItem> items) {
-                setupAdapter(items);
-            }
-        });
+        setLiveDataObservers();
     }
 
     @Override
@@ -69,9 +70,46 @@ public class PhotoGalleryFragment extends Fragment {
         return mBinding.getRoot();
     }
 
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+
+        inflater.inflate(R.menu.fragment_photo_gallery, menu);
+
+        MenuItem searchMenuItem = menu.findItem(R.id.menu_item_search);
+        SearchView searchView = (SearchView) searchMenuItem.getActionView();
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                mViewModel.fetchSearchItemsAsync(query);
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+    }
+
     private void initViews() {
         mBinding.recyclerViewPhotoGallery
                 .setLayoutManager(new GridLayoutManager(getContext(), SPAN_COUNT));
+    }
+
+    private void setLiveDataObservers() {
+        mViewModel.getPopularItemsLiveData().observe(this, new Observer<List<GalleryItem>>() {
+            @Override
+            public void onChanged(List<GalleryItem> items) {
+                setupAdapter(items);
+            }
+        });
+        mViewModel.getSearchItemsLiveData().observe(this, new Observer<List<GalleryItem>>() {
+            @Override
+            public void onChanged(List<GalleryItem> items) {
+                setupAdapter(items);
+            }
+        });
     }
 
     private void setupAdapter(List<GalleryItem> items) {
