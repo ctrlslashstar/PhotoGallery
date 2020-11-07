@@ -3,6 +3,7 @@ package org.maktab.photogallery.view.activity;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
@@ -17,7 +18,7 @@ public abstract class SingleFragmentActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         //inflate layout for activity
-        setContentView(R.layout.activity_fragment);
+        DataBindingUtil.setContentView(this, R.layout.activity_fragment);
 
         FragmentManager fragmentManager = getSupportFragmentManager();
 

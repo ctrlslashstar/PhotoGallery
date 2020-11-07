@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -13,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import org.maktab.photogallery.R;
 import org.maktab.photogallery.adapter.PhotoAdapter;
+import org.maktab.photogallery.databinding.FragmentPhotoGalleryBinding;
 import org.maktab.photogallery.model.GalleryItem;
 import org.maktab.photogallery.viewmodel.PhotoGalleryViewModel;
 
@@ -23,8 +25,8 @@ public class PhotoGalleryFragment extends Fragment {
     private static final String TAG = "PGF";
     private static final int SPAN_COUNT = 3;
 
+    private FragmentPhotoGalleryBinding mBinding;
     private PhotoGalleryViewModel mViewModel;
-    private RecyclerView mRecyclerView;
 
     public PhotoGalleryFragment() {
         // Required empty public constructor
@@ -56,24 +58,24 @@ public class PhotoGalleryFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_photo_gallery, container, false);
+        mBinding = DataBindingUtil.inflate(
+                inflater,
+                R.layout.fragment_photo_gallery,
+                container,
+                false);
 
-        findViews(view);
         initViews();
 
-        return view;
-    }
-
-    private void findViews(View view) {
-        mRecyclerView = view.findViewById(R.id.recycler_view_photo_gallery);
+        return mBinding.getRoot();
     }
 
     private void initViews() {
-        mRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), SPAN_COUNT));
+        mBinding.recyclerViewPhotoGallery
+                .setLayoutManager(new GridLayoutManager(getContext(), SPAN_COUNT));
     }
 
     private void setupAdapter(List<GalleryItem> items) {
         PhotoAdapter adapter = new PhotoAdapter(getContext(), items);
-        mRecyclerView.setAdapter(adapter);
+        mBinding.recyclerViewPhotoGallery.setAdapter(adapter);
     }
 }
