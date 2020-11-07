@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="org.maktab.photogallery">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -11,6 +11,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.PhotoGallery">
+        <service
+            android:name=".service.MyService"
+            android:enabled="true"
+            android:exported="true"
+            android:description="@string/my_service_desc"></service>
+
         <activity android:name=".view.activity.PhotoGalleryActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

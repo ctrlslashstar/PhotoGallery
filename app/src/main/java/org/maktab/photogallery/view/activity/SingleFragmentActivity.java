@@ -8,8 +8,11 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import org.maktab.photogallery.R;
+import org.maktab.photogallery.databinding.ActivityFragmentBinding;
 
 public abstract class SingleFragmentActivity extends AppCompatActivity {
+
+    ActivityFragmentBinding mBinding;
 
     public abstract Fragment createFragment();
 
@@ -18,7 +21,7 @@ public abstract class SingleFragmentActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         //inflate layout for activity
-        DataBindingUtil.setContentView(this, R.layout.activity_fragment);
+        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_fragment);
 
         FragmentManager fragmentManager = getSupportFragmentManager();
 
