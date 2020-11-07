@@ -21,6 +21,7 @@ import org.maktab.photogallery.R;
 import org.maktab.photogallery.adapter.PhotoAdapter;
 import org.maktab.photogallery.databinding.FragmentPhotoGalleryBinding;
 import org.maktab.photogallery.model.GalleryItem;
+import org.maktab.photogallery.utilities.QueryPreferences;
 import org.maktab.photogallery.viewmodel.PhotoGalleryViewModel;
 
 import java.util.List;
@@ -51,7 +52,7 @@ public class PhotoGalleryFragment extends Fragment {
 
         mViewModel = new ViewModelProvider(this).get(PhotoGalleryViewModel.class);
 
-        mViewModel.fetchPopularItemsAsync();
+        mViewModel.fetchItems();
         setLiveDataObservers();
     }
 
@@ -82,6 +83,7 @@ public class PhotoGalleryFragment extends Fragment {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 mViewModel.fetchSearchItemsAsync(query);
+                mViewModel.setQueryInPreferences(query);
                 return true;
             }
 
@@ -90,6 +92,27 @@ public class PhotoGalleryFragment extends Fragment {
                 return false;
             }
         });
+
+        searchView.setOnSearchClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String query = mViewModel.getQueryFromPreferences();
+                if (query != null)
+                    searchView.setQuery(query, false);
+            }
+        });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_item_clear:
+                mViewModel.setQueryInPreferences(null);
+                mViewModel.fetchItems();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     private void initViews() {
