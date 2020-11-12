@@ -40,7 +40,7 @@ public class PhotoRepository {
     }
 
     //this method must run on background thread.
-    public List<GalleryItem> fetchItems() {
+    public List<GalleryItem> fetchPopularItems() {
         Call<List<GalleryItem>> call = mFlickrService.listItems(NetworkParams.getPopularOptions());
         try {
             Response<List<GalleryItem>> response = call.execute();
@@ -73,6 +73,18 @@ public class PhotoRepository {
                 Log.e(TAG, t.getMessage(), t);
             }
         });
+    }
+
+    //this method must run on background thread.
+    public List<GalleryItem> fetchSearchItems(String query) {
+        Call<List<GalleryItem>> call = mFlickrService.listItems(NetworkParams.getSearchOptions(query));
+        try {
+            Response<List<GalleryItem>> response = call.execute();
+            return response.body();
+        } catch (IOException e) {
+            Log.e(TAG, e.getMessage(), e);
+            return null;
+        }
     }
 
     public void fetchSearchItemsAsync(String query) {

@@ -21,6 +21,7 @@ import org.maktab.photogallery.R;
 import org.maktab.photogallery.adapter.PhotoAdapter;
 import org.maktab.photogallery.databinding.FragmentPhotoGalleryBinding;
 import org.maktab.photogallery.model.GalleryItem;
+import org.maktab.photogallery.service.PollService;
 import org.maktab.photogallery.utilities.QueryPreferences;
 import org.maktab.photogallery.viewmodel.PhotoGalleryViewModel;
 
@@ -54,6 +55,9 @@ public class PhotoGalleryFragment extends Fragment {
 
         mViewModel.fetchItems();
         setLiveDataObservers();
+
+        //test dummy
+        PollService.scheduleAlarm(getActivity());
     }
 
     @Override
