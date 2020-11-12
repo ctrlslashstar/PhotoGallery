@@ -1,16 +1,15 @@
-package org.maktab.photogallery.repository;
+package org.maktab.photogallery.data.repository;
 
 import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 
-import org.maktab.photogallery.model.GalleryItem;
-import org.maktab.photogallery.network.NetworkParams;
-import org.maktab.photogallery.network.retrofit.FlickrService;
-import org.maktab.photogallery.network.retrofit.RetrofitInstance;
+import org.maktab.photogallery.data.model.GalleryItem;
+import org.maktab.photogallery.data.remote.NetworkParams;
+import org.maktab.photogallery.data.remote.retrofit.FlickrService;
+import org.maktab.photogallery.data.remote.retrofit.RetrofitInstance;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 
 import retrofit2.Call;

@@ -1,4 +1,4 @@
-package org.maktab.photogallery.model;
+package org.maktab.photogallery.data.model;
 
 public class GalleryItem {
     private String mId;

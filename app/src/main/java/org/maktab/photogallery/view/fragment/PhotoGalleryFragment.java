@@ -19,7 +19,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import org.maktab.photogallery.R;
 import org.maktab.photogallery.adapter.PhotoAdapter;
 import org.maktab.photogallery.databinding.FragmentPhotoGalleryBinding;
-import org.maktab.photogallery.model.GalleryItem;
+import org.maktab.photogallery.data.model.GalleryItem;
 import org.maktab.photogallery.viewmodel.PhotoGalleryViewModel;
 
 import java.util.List;

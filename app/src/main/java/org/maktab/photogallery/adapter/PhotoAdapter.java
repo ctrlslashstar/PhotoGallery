@@ -12,7 +12,7 @@ import com.squareup.picasso.Picasso;
 
 import org.maktab.photogallery.R;
 import org.maktab.photogallery.databinding.ListItemPhotoGalleryBinding;
-import org.maktab.photogallery.model.GalleryItem;
+import org.maktab.photogallery.data.model.GalleryItem;
 
 import java.util.List;
 

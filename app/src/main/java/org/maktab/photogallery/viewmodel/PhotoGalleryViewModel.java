@@ -5,10 +5,9 @@ import android.app.Application;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.ViewModel;
 
-import org.maktab.photogallery.model.GalleryItem;
-import org.maktab.photogallery.repository.PhotoRepository;
+import org.maktab.photogallery.data.model.GalleryItem;
+import org.maktab.photogallery.data.repository.PhotoRepository;
 import org.maktab.photogallery.service.PollService;
 import org.maktab.photogallery.utilities.QueryPreferences;
 

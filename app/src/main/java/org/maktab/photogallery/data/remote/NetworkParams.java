@@ -1,4 +1,4 @@
-package org.maktab.photogallery.network;
+package org.maktab.photogallery.data.remote;
 
 import java.util.HashMap;
 import java.util.Map;

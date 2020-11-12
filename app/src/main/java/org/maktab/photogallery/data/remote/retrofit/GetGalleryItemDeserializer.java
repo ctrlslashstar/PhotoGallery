@@ -1,4 +1,4 @@
-package org.maktab.photogallery.network.retrofit;
+package org.maktab.photogallery.data.remote.retrofit;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
@@ -7,7 +7,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 
-import org.maktab.photogallery.model.GalleryItem;
+import org.maktab.photogallery.data.model.GalleryItem;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
