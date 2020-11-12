@@ -10,4 +10,8 @@
     <string name="new_pictures_title">New PhotoGallery Pictures</string>
     <string name="new_pictures_text">You have new pictures in PhotoGallery.</string>
 
+    <string name="channel_id">flicker_channel_id</string>
+    <string name="channel_name">Flickr Channel</string>
+    <string name="channel_description">This is notification channel for flickr</string>
+
 </resources>
