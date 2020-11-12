@@ -74,22 +74,38 @@ public class PollService extends IntentService {
         return false;
     }
 
-    public static void scheduleAlarm(Context context) {
+    public static void scheduleAlarm(Context context, boolean isOn) {
         Log.d(TAG, "scheduleAlarm");
         AlarmManager alarmManager =
                 (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
-        Intent intent = newIntent(context);
-        PendingIntent operation = PendingIntent.getService(
+        PendingIntent operation = getAlarmPendingIntent(context, 0);
+
+        if (isOn) {
+            Log.d(TAG, "schedule On");
+            alarmManager.setInexactRepeating(
+                    AlarmManager.ELAPSED_REALTIME,
+                    SystemClock.elapsedRealtime(),
+                    TimeUnit.MINUTES.toMillis(1),
+                    operation);
+        } else {
+            Log.d(TAG, "schedule Off");
+            alarmManager.cancel(operation);
+            operation.cancel();
+        }
+    }
+
+    public static boolean isAlarmSet(Context context) {
+        PendingIntent operation = getAlarmPendingIntent(context, PendingIntent.FLAG_NO_CREATE);
+        return operation != null;
+    }
+
+    private static PendingIntent getAlarmPendingIntent(Context context, int flags) {
+        Intent intent = PollService.newIntent(context);
+        return PendingIntent.getService(
                 context,
                 0,
                 intent,
-                0);
-
-        alarmManager.setInexactRepeating(
-                AlarmManager.ELAPSED_REALTIME,
-                SystemClock.elapsedRealtime(),
-                TimeUnit.MINUTES.toMillis(1),
-                operation);
+                flags);
     }
 }

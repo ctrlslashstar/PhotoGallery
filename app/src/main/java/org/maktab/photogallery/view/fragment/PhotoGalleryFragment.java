@@ -15,14 +15,11 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import org.maktab.photogallery.R;
 import org.maktab.photogallery.adapter.PhotoAdapter;
 import org.maktab.photogallery.databinding.FragmentPhotoGalleryBinding;
 import org.maktab.photogallery.model.GalleryItem;
-import org.maktab.photogallery.service.PollService;
-import org.maktab.photogallery.utilities.QueryPreferences;
 import org.maktab.photogallery.viewmodel.PhotoGalleryViewModel;
 
 import java.util.List;
@@ -55,9 +52,6 @@ public class PhotoGalleryFragment extends Fragment {
 
         mViewModel.fetchItems();
         setLiveDataObservers();
-
-        //test dummy
-        PollService.scheduleAlarm(getActivity());
     }
 
     @Override
@@ -83,6 +77,38 @@ public class PhotoGalleryFragment extends Fragment {
 
         MenuItem searchMenuItem = menu.findItem(R.id.menu_item_search);
         SearchView searchView = (SearchView) searchMenuItem.getActionView();
+        setSearchViewListeners(searchView);
+
+        MenuItem togglePollingItem = menu.findItem(R.id.menu_item_poll_toggling);
+        if (mViewModel.isAlarmScheduled()) {
+            togglePollingItem.setTitle(R.string.stop_polling);
+        } else {
+            togglePollingItem.setTitle(R.string.start_polling);
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_item_clear:
+                mViewModel.setQueryInPreferences(null);
+                mViewModel.fetchItems();
+                return true;
+            case R.id.menu_item_poll_toggling:
+                mViewModel.togglePolling();
+                getActivity().invalidateOptionsMenu();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void initViews() {
+        mBinding.recyclerViewPhotoGallery
+                .setLayoutManager(new GridLayoutManager(getContext(), SPAN_COUNT));
+    }
+
+    private void setSearchViewListeners(SearchView searchView) {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -105,23 +131,6 @@ public class PhotoGalleryFragment extends Fragment {
                     searchView.setQuery(query, false);
             }
         });
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menu_item_clear:
-                mViewModel.setQueryInPreferences(null);
-                mViewModel.fetchItems();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
-    private void initViews() {
-        mBinding.recyclerViewPhotoGallery
-                .setLayoutManager(new GridLayoutManager(getContext(), SPAN_COUNT));
     }
 
     private void setLiveDataObservers() {
