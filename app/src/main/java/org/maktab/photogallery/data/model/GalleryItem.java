@@ -4,6 +4,7 @@ public class GalleryItem {
     private String mId;
     private String mTitle;
     private String mUrl;
+    private String mOwner;
 
     public String getId() {
         return mId;
@@ -29,12 +30,21 @@ public class GalleryItem {
         mUrl = url;
     }
 
+    public String getOwner() {
+        return mOwner;
+    }
+
+    public void setOwner(String owner) {
+        mOwner = owner;
+    }
+
     public GalleryItem() {
     }
 
-    public GalleryItem(String id, String title, String url) {
+    public GalleryItem(String id, String title, String url, String owner) {
         mId = id;
         mTitle = title;
         mUrl = url;
+        mOwner = owner;
     }
 }

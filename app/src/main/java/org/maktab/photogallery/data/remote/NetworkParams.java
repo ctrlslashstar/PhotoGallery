@@ -1,5 +1,9 @@
 package org.maktab.photogallery.data.remote;
 
+import android.net.Uri;
+
+import org.maktab.photogallery.data.model.GalleryItem;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,5 +38,15 @@ public class NetworkParams {
         searchOptions.put("text", query);
 
         return searchOptions;
+    }
+
+    public static Uri getPhotoPageUri(GalleryItem galleryItem) {
+        Uri uri = Uri.parse("https://www.flickr.com/photos")
+                .buildUpon()
+                .appendPath(galleryItem.getOwner())
+                .appendPath(galleryItem.getId())
+                .build();
+
+        return uri;
     }
 }

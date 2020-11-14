@@ -149,7 +149,7 @@ public class PhotoGalleryFragment extends Fragment {
     }
 
     private void setupAdapter(List<GalleryItem> items) {
-        PhotoAdapter adapter = new PhotoAdapter(getContext(), items);
+        PhotoAdapter adapter = new PhotoAdapter(mViewModel);
         mBinding.recyclerViewPhotoGallery.setAdapter(adapter);
     }
 }

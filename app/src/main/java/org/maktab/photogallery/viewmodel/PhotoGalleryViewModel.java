@@ -1,20 +1,26 @@
 package org.maktab.photogallery.viewmodel;
 
 import android.app.Application;
+import android.content.Intent;
+import android.net.Uri;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
 import org.maktab.photogallery.data.model.GalleryItem;
+import org.maktab.photogallery.data.remote.NetworkParams;
 import org.maktab.photogallery.data.repository.PhotoRepository;
 import org.maktab.photogallery.utilities.QueryPreferences;
 import org.maktab.photogallery.work.PollWorker;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class PhotoGalleryViewModel extends AndroidViewModel {
 
+    private static final String TAG = "PhotoGalleryViewModel";
     private final PhotoRepository mRepository;
     private final LiveData<List<GalleryItem>> mPopularItemsLiveData;
     private final LiveData<List<GalleryItem>> mSearchItemsLiveData;
@@ -52,6 +58,17 @@ public class PhotoGalleryViewModel extends AndroidViewModel {
         }
     }
 
+    public List<GalleryItem> getCurrentItems() {
+        String query = QueryPreferences.getSearchQuery(getApplication());
+        if (query != null && mSearchItemsLiveData.getValue() != null) {
+            return mSearchItemsLiveData.getValue();
+        } else if (query == null && mPopularItemsLiveData.getValue() != null) {
+            return mPopularItemsLiveData.getValue();
+        } else {
+            return new ArrayList<>();
+        }
+    }
+
     public void setQueryInPreferences(String query) {
         QueryPreferences.setSearchQuery(getApplication(), query);
     }
@@ -67,5 +84,15 @@ public class PhotoGalleryViewModel extends AndroidViewModel {
 
     public boolean isTaskScheduled() {
         return PollWorker.isWorkEnqueued(getApplication());
+    }
+
+    public void onImageClicked(int position) {
+        GalleryItem item = getCurrentItems().get(position);
+        Uri photoPageUri = NetworkParams.getPhotoPageUri(item);
+        Log.d(TAG, photoPageUri.toString());
+
+        Intent intent = new Intent(Intent.ACTION_VIEW, photoPageUri);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        getApplication().startActivity(intent);
     }
 }
