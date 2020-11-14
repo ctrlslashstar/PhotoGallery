@@ -4,6 +4,7 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
         android:name=".PhotoGalleryApplication"
@@ -14,8 +15,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.PhotoGallery">
         <service
+            android:name=".service.PollJobService"
+            android:enabled="true"
+            android:exported="true"></service>
+        <service
             android:name=".service.PollService"
-            android:exported="false"></service>
+            android:exported="false" />
 
         <activity android:name=".view.activity.PhotoGalleryActivity">
             <intent-filter>

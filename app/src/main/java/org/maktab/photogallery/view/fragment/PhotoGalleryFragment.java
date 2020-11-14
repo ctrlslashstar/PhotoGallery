@@ -80,7 +80,7 @@ public class PhotoGalleryFragment extends Fragment {
         setSearchViewListeners(searchView);
 
         MenuItem togglePollingItem = menu.findItem(R.id.menu_item_poll_toggling);
-        if (mViewModel.isAlarmScheduled()) {
+        if (mViewModel.isTaskScheduled()) {
             togglePollingItem.setTitle(R.string.stop_polling);
         } else {
             togglePollingItem.setTitle(R.string.start_polling);
