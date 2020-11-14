@@ -1,7 +1,6 @@
 package org.maktab.photogallery.viewmodel;
 
 import android.app.Application;
-import android.os.Build;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -9,9 +8,8 @@ import androidx.lifecycle.LiveData;
 
 import org.maktab.photogallery.data.model.GalleryItem;
 import org.maktab.photogallery.data.repository.PhotoRepository;
-import org.maktab.photogallery.service.PollJobService;
-import org.maktab.photogallery.service.PollService;
 import org.maktab.photogallery.utilities.QueryPreferences;
+import org.maktab.photogallery.work.PollWorker;
 
 import java.util.List;
 
@@ -63,20 +61,11 @@ public class PhotoGalleryViewModel extends AndroidViewModel {
     }
 
     public void togglePolling() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            boolean isOn = PollService.isAlarmSet(getApplication());
-            PollService.scheduleAlarm(getApplication(), !isOn);
-        } else {
-            boolean isOn = PollJobService.isJobScheduled(getApplication());
-            PollJobService.scheduleJob(getApplication(), !isOn);
-        }
+        boolean isOn = PollWorker.isWorkEnqueued(getApplication());
+        PollWorker.enqueueWork(getApplication(), !isOn);
     }
 
     public boolean isTaskScheduled() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            return PollService.isAlarmSet(getApplication());
-        } else {
-            return PollJobService.isJobScheduled(getApplication());
-        }
+        return PollWorker.isWorkEnqueued(getApplication());
     }
 }
