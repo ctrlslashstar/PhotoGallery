@@ -14,16 +14,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.PhotoGallery">
-        <activity android:name=".view.activity.PhotoPageActivity"></activity>
-
-        <service
-            android:name=".service.PollJobService"
-            android:enabled="true"
-            android:exported="true"
-            android:permission="android.permission.BIND_JOB_SERVICE" />
-        <service
-            android:name=".service.PollService"
-            android:exported="false" />
+        <activity android:name=".view.activity.PhotoPageActivity"
+            android:configChanges="orientation|screenSize"></activity>
 
         <activity android:name=".view.activity.PhotoGalleryActivity">
             <intent-filter>
