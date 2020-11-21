@@ -13,6 +13,7 @@ import org.maktab.photogallery.data.model.GalleryItem;
 import org.maktab.photogallery.data.remote.NetworkParams;
 import org.maktab.photogallery.data.repository.PhotoRepository;
 import org.maktab.photogallery.utilities.QueryPreferences;
+import org.maktab.photogallery.view.activity.PhotoPageActivity;
 import org.maktab.photogallery.work.PollWorker;
 
 import java.util.ArrayList;
@@ -91,8 +92,10 @@ public class PhotoGalleryViewModel extends AndroidViewModel {
         Uri photoPageUri = NetworkParams.getPhotoPageUri(item);
         Log.d(TAG, photoPageUri.toString());
 
-        Intent intent = new Intent(Intent.ACTION_VIEW, photoPageUri);
+        Intent intent = PhotoPageActivity.newIntent(getApplication(), photoPageUri);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         getApplication().startActivity(intent);
+
+        /*Intent intent = new Intent(Intent.ACTION_VIEW, photoPageUri);*/
     }
 }
