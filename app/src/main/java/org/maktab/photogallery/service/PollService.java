@@ -9,6 +9,7 @@ import android.net.ConnectivityManager;
 import android.os.SystemClock;
 import android.util.Log;
 
+import org.maktab.photogallery.utilities.QueryPreferences;
 import org.maktab.photogallery.utilities.ServicesUtils;
 
 import java.util.concurrent.TimeUnit;
@@ -56,6 +57,7 @@ public class PollService extends IntentService {
             alarmManager.cancel(operation);
             operation.cancel();
         }
+        QueryPreferences.setIsAlarmOn(context, isOn);
     }
 
     public static boolean isAlarmSet(Context context) {

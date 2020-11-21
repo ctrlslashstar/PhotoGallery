@@ -63,20 +63,25 @@ public class PhotoGalleryViewModel extends AndroidViewModel {
     }
 
     public void togglePolling() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+        boolean isOn = PollService.isAlarmSet(getApplication());
+        PollService.scheduleAlarm(getApplication(), !isOn);
+
+        /*if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             boolean isOn = PollService.isAlarmSet(getApplication());
             PollService.scheduleAlarm(getApplication(), !isOn);
         } else {
             boolean isOn = PollJobService.isJobScheduled(getApplication());
             PollJobService.scheduleJob(getApplication(), !isOn);
-        }
+        }*/
     }
 
     public boolean isTaskScheduled() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+        return PollService.isAlarmSet(getApplication());
+
+        /*if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             return PollService.isAlarmSet(getApplication());
         } else {
             return PollJobService.isJobScheduled(getApplication());
-        }
+        }*/
     }
 }

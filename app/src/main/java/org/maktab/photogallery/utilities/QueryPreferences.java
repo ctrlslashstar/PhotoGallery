@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 public class QueryPreferences {
     private static final String PREF_SEARCH_QUERY = "searchQuery";
     private static final String PREF_LAST_ID = "lastId";
+    private static final String PREF_IS_ALARM_ON = "isAlarmOn";
 
     public static String getSearchQuery(Context context) {
         return getSharedPreferences(context).getString(PREF_SEARCH_QUERY, null);
@@ -26,6 +27,17 @@ public class QueryPreferences {
         getSharedPreferences(context)
                 .edit()
                 .putString(PREF_LAST_ID, lastId)
+                .apply();
+    }
+
+    public static boolean isAlarmOn(Context context) {
+        return getSharedPreferences(context).getBoolean(PREF_IS_ALARM_ON, false);
+    }
+
+    public static void setIsAlarmOn(Context context, boolean isAlarmOn) {
+        getSharedPreferences(context)
+                .edit()
+                .putBoolean(PREF_IS_ALARM_ON, isAlarmOn)
                 .apply();
     }
 
