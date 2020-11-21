@@ -1,5 +1,8 @@
 package org.maktab.photogallery.view.fragment;
 
+import android.content.BroadcastReceiver;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -17,6 +20,7 @@ import android.webkit.WebViewClient;
 
 import org.maktab.photogallery.R;
 import org.maktab.photogallery.databinding.FragmentPhotoPageBinding;
+import org.maktab.photogallery.receiver.ScreenReceiver;
 
 public class PhotoPageFragment extends Fragment {
 
@@ -24,6 +28,7 @@ public class PhotoPageFragment extends Fragment {
 
     private FragmentPhotoPageBinding mBinding;
     private Uri mPhotoPageUri;
+    private ScreenReceiver mScreenReceiver;
 
     public PhotoPageFragment() {
         // Required empty public constructor
@@ -40,6 +45,7 @@ public class PhotoPageFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mScreenReceiver = new ScreenReceiver();
         if (getArguments() != null) {
             mPhotoPageUri = getArguments().getParcelable(ARG_PHOTO_PAGE_URI);
         }
@@ -83,5 +89,22 @@ public class PhotoPageFragment extends Fragment {
         mBinding.webViewPhotoPage.loadUrl(mPhotoPageUri.toString());
 
         return mBinding.getRoot();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(Intent.ACTION_SCREEN_ON);
+        intentFilter.addAction(Intent.ACTION_SCREEN_OFF);
+        getActivity().registerReceiver(mScreenReceiver, intentFilter);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        getActivity().unregisterReceiver(mScreenReceiver);
     }
 }
