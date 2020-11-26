@@ -50,7 +50,6 @@ public class ServicesUtils {
             Log.d(tag, "show notification");
 
             sendNotificationEvent(context);
-//            createAndShowNotification(context);
         } else {
             Log.d(tag, "do nothing");
         }
@@ -77,7 +76,6 @@ public class ServicesUtils {
         Intent intent = new Intent(ACTION_PRIVATE_NOTIFICATION);
         intent.putExtra(EXTRA_NOTIFICATION_ID, NOTIFICATION_ID);
         intent.putExtra(EXTRA_NOTIFICATION, notification);
-//        context.sendBroadcast(intent, PERMISSION_PRIVATE_NOTIFICATION);
         context.sendOrderedBroadcast(
                 intent,
                 PERMISSION_PRIVATE_NOTIFICATION,
