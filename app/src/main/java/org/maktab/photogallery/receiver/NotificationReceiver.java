@@ -12,7 +12,7 @@ import org.maktab.photogallery.utilities.ServicesUtils;
 
 public class NotificationReceiver extends BroadcastReceiver {
 
-    private static final String TAG = "PGNotificationReceiver";
+    public static final String TAG = "PGNotificationReceiver";
 
     @Override
     public void onReceive(Context context, Intent intent) {

@@ -20,9 +20,9 @@ public class ServicesUtils {
 
     private static final int NOTIFICATION_ID = 1;
 
-    private static final String ACTION_PRIVATE_NOTIFICATION =
+    public static final String ACTION_PRIVATE_NOTIFICATION =
             "org.maktab.photogallery.ACTION.PRIVATE_NOTIFICATION";
-    private static final String PERMISSION_PRIVATE_NOTIFICATION =
+    public static final String PERMISSION_PRIVATE_NOTIFICATION =
             "org.maktab.photogallery.PRIVATE";
 
     public static final String EXTRA_NOTIFICATION_ID = "org.maktab.photogallery.notificationId";

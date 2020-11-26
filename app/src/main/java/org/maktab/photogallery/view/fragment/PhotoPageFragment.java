@@ -18,7 +18,7 @@ import android.webkit.WebViewClient;
 import org.maktab.photogallery.R;
 import org.maktab.photogallery.databinding.FragmentPhotoPageBinding;
 
-public class PhotoPageFragment extends Fragment {
+public class PhotoPageFragment extends VisibleFragment {
 
     private static final String ARG_PHOTO_PAGE_URI = "photoPageUri";
 
