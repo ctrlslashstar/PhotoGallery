@@ -1,5 +1,6 @@
 package org.maktab.photogallery.utilities;
 
+import android.app.Activity;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -76,27 +77,14 @@ public class ServicesUtils {
         Intent intent = new Intent(ACTION_PRIVATE_NOTIFICATION);
         intent.putExtra(EXTRA_NOTIFICATION_ID, NOTIFICATION_ID);
         intent.putExtra(EXTRA_NOTIFICATION, notification);
-        context.sendBroadcast(intent, PERMISSION_PRIVATE_NOTIFICATION);
+//        context.sendBroadcast(intent, PERMISSION_PRIVATE_NOTIFICATION);
+        context.sendOrderedBroadcast(
+                intent,
+                PERMISSION_PRIVATE_NOTIFICATION,
+                null,
+                null,
+                Activity.RESULT_OK,
+                null,
+                null);
     }
-
-    /*private static void createAndShowNotification(Context context) {
-        PendingIntent pendingIntent = PendingIntent.getActivity(
-                context,
-                0,
-                PhotoGalleryActivity.newIntent(context),
-                0);
-
-        String channelId = context.getResources().getString(R.string.channel_id);
-        Notification notification = new NotificationCompat.Builder(context, channelId)
-                .setContentTitle(context.getResources().getString(R.string.new_pictures_title))
-                .setContentText(context.getResources().getString(R.string.new_pictures_text))
-                .setSmallIcon(android.R.drawable.ic_menu_report_image)
-                .setContentIntent(pendingIntent)
-                .setAutoCancel(true)
-                .build();
-
-        NotificationManagerCompat notificationManagerCompat =
-                NotificationManagerCompat.from(context);
-        notificationManagerCompat.notify(NOTIFICATION_ID, notification);
-    }*/
 }

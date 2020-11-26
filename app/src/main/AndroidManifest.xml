@@ -22,7 +22,7 @@
             android:name=".receiver.NotificationReceiver"
             android:enabled="true"
             android:exported="true">
-            <intent-filter>
+            <intent-filter android:priority="-999">
                 <action android:name="org.maktab.photogallery.ACTION.PRIVATE_NOTIFICATION" />
             </intent-filter>
         </receiver>

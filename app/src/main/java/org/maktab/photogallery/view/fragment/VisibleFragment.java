@@ -1,5 +1,6 @@
 package org.maktab.photogallery.view.fragment;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -22,6 +23,8 @@ public class VisibleFragment extends Fragment {
                     context,
                     "The app is visible and just received a notification event",
                     Toast.LENGTH_LONG).show();
+
+            setResultCode(Activity.RESULT_CANCELED);
         }
     };
 
