@@ -2,13 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="org.maktab.photogallery">
 
-    <permission android:name="org.maktab.photogallery.PRIVATE"
-        android:protectionLevel="signature" />
-
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    <uses-permission android:name="org.maktab.photogallery.PRIVATE" />
 
     <application
         android:name=".PhotoGalleryApplication"
@@ -18,14 +14,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.PhotoGallery">
-        <receiver
-            android:name=".receiver.NotificationReceiver"
-            android:enabled="true"
-            android:exported="true">
-            <intent-filter android:priority="-999">
-                <action android:name="org.maktab.photogallery.ACTION.PRIVATE_NOTIFICATION" />
-            </intent-filter>
-        </receiver>
 
         <activity
             android:name=".view.activity.PhotoPageActivity"

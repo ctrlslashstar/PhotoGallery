@@ -12,31 +12,11 @@ import org.maktab.photogallery.event.NotificationEvent;
 
 public class VisibleFragment extends Fragment {
 
-    /*private BroadcastReceiver mReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Log.d(NotificationReceiver.TAG, "Fragment is visible: " + intent);
-            Toast.makeText(
-                    context,
-                    "The app is visible and just received a notification event",
-                    Toast.LENGTH_LONG).show();
-
-            setResultCode(Activity.RESULT_CANCELED);
-        }
-    };*/
-
     @Override
     public void onStart() {
         super.onStart();
 
         EventBus.getDefault().register(this);
-
-        /*IntentFilter intentFilter = new IntentFilter(ServicesUtils.ACTION_PRIVATE_NOTIFICATION);
-        getActivity().registerReceiver(
-                mReceiver,
-                intentFilter,
-                ServicesUtils.PERMISSION_PRIVATE_NOTIFICATION,
-                null);*/
     }
 
     @Override
@@ -44,7 +24,6 @@ public class VisibleFragment extends Fragment {
         super.onStop();
 
         EventBus.getDefault().unregister(this);
-        /*getActivity().unregisterReceiver(mReceiver);*/
     }
 
     @Subscribe(threadMode = ThreadMode.POSTING, priority = 2)

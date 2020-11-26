@@ -1,14 +1,11 @@
 package org.maktab.photogallery.utilities;
 
-import android.app.Activity;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
 
 import org.greenrobot.eventbus.EventBus;
 import org.maktab.photogallery.R;
@@ -22,14 +19,6 @@ import java.util.List;
 public class ServicesUtils {
 
     private static final int NOTIFICATION_ID = 1;
-
-    public static final String ACTION_PRIVATE_NOTIFICATION =
-            "org.maktab.photogallery.ACTION.PRIVATE_NOTIFICATION";
-    public static final String PERMISSION_PRIVATE_NOTIFICATION =
-            "org.maktab.photogallery.PRIVATE";
-
-    public static final String EXTRA_NOTIFICATION_ID = "org.maktab.photogallery.notificationId";
-    public static final String EXTRA_NOTIFICATION = "org.maktab.photogallery.notification";
 
     public static void pollAndShowNotification(Context context, String tag) {
         String query = QueryPreferences.getSearchQuery(context);
@@ -77,17 +66,5 @@ public class ServicesUtils {
 
         NotificationEvent notificationEvent = new NotificationEvent(NOTIFICATION_ID, notification);
         EventBus.getDefault().post(notificationEvent);
-
-        /*Intent intent = new Intent(ACTION_PRIVATE_NOTIFICATION);
-        intent.putExtra(EXTRA_NOTIFICATION_ID, NOTIFICATION_ID);
-        intent.putExtra(EXTRA_NOTIFICATION, notification);
-        context.sendOrderedBroadcast(
-                intent,
-                PERMISSION_PRIVATE_NOTIFICATION,
-                null,
-                null,
-                Activity.RESULT_OK,
-                null,
-                null);*/
     }
 }
