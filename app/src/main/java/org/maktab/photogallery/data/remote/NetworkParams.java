@@ -20,7 +20,7 @@ public class NetworkParams {
         put("api_key", API_KEY);
         put("format", "json");
         put("nojsoncallback", "1");
-        put("extras", "url_s");
+        put("extras", "url_s,geo");
         put("user_id", "34427466731@N01");
     }};
 

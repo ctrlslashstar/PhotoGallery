@@ -15,5 +15,6 @@
     <string name="channel_description">This is notification channel for flickr</string>
     <string name="menu_item_locatr">Locatr</string>
     <string name="menu_item_location">Location</string>
+    <string name="title_activity_maps">Map</string>
 
 </resources>

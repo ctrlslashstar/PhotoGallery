@@ -9,6 +9,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -28,9 +29,14 @@ public class LocatrViewModel extends AndroidViewModel {
     private final LiveData<List<GalleryItem>> mSearchItemsLiveData;
 
     private FusedLocationProviderClient mFusedLocationClient;
+    private MutableLiveData<Location> mMyLocation = new MutableLiveData<>();
 
     public LiveData<List<GalleryItem>> getSearchItemsLiveData() {
         return mSearchItemsLiveData;
+    }
+
+    public LiveData<Location> getMyLocation() {
+        return mMyLocation;
     }
 
     public LocatrViewModel(@NonNull Application application) {
@@ -60,6 +66,7 @@ public class LocatrViewModel extends AndroidViewModel {
                         "lat: " + location.getLatitude() + ", lon: " + location.getLongitude());
 
                 fetchSearchItemsAsync(location);
+                mMyLocation.setValue(location);
             }
         };
 

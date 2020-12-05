@@ -5,6 +5,8 @@ public class GalleryItem {
     private String mTitle;
     private String mUrl;
     private String mOwner;
+    private double mLat;
+    private double mLng;
 
     public String getId() {
         return mId;
@@ -38,13 +40,31 @@ public class GalleryItem {
         mOwner = owner;
     }
 
+    public double getLat() {
+        return mLat;
+    }
+
+    public void setLat(double lat) {
+        mLat = lat;
+    }
+
+    public double getLng() {
+        return mLng;
+    }
+
+    public void setLng(double lng) {
+        mLng = lng;
+    }
+
     public GalleryItem() {
     }
 
-    public GalleryItem(String id, String title, String url, String owner) {
+    public GalleryItem(String id, String title, String url, String owner, double lat, double lng) {
         mId = id;
         mTitle = title;
         mUrl = url;
         mOwner = owner;
+        mLat = lat;
+        mLng = lng;
     }
 }

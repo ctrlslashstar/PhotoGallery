@@ -3,49 +3,49 @@ package org.maktab.photogallery.view.fragment;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
-import android.os.Looper;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Toast;
-
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationCallback;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationResult;
-import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import org.maktab.photogallery.R;
 import org.maktab.photogallery.data.model.GalleryItem;
-import org.maktab.photogallery.databinding.FragmentLocatrBinding;
 import org.maktab.photogallery.viewmodel.LocatrViewModel;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
-public class LocatrFragment extends Fragment {
+public class LocatrFragment extends SupportMapFragment {
 
     public static final String TAG = "LocatrFragment";
     private static final int REQUEST_CODE_PERMISSION_LOCATION = 0;
 
-    private FragmentLocatrBinding mBinding;
     private LocatrViewModel mViewModel;
+    private LatLng mItemLatLng;
+    private Bitmap mItemBitmap;
+    private GoogleMap mMap;
 
     public LocatrFragment() {
         // Required empty public constructor
@@ -70,24 +70,47 @@ public class LocatrFragment extends Fragment {
                 if (galleryItems == null || galleryItems.size() == 0)
                     return;
 
+                GalleryItem item = galleryItems.get(0);
+                mItemLatLng = new LatLng(item.getLat(), item.getLng());
                 Picasso.get()
-                        .load(galleryItems.get(0).getUrl())
+                        .load(item.getUrl())
                         .placeholder(R.mipmap.ic_android_placeholder)
-                        .into(mBinding.imageView);
+                        .into(new Target() {
+                            @Override
+                            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                                mItemBitmap = bitmap;
+                                updateUI();
+                            }
+
+                            @Override
+                            public void onBitmapFailed(Exception e, Drawable errorDrawable) {
+
+                            }
+
+                            @Override
+                            public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+                            }
+                        });
+
+                updateUI();
             }
         });
-    }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        mBinding = DataBindingUtil.inflate(
-                inflater,
-                R.layout.fragment_locatr,
-                container,
-                false);
+        mViewModel.getMyLocation().observe(this, new Observer<Location>() {
+            @Override
+            public void onChanged(Location location) {
+                updateUI();
+            }
+        });
 
-        return mBinding.getRoot();
+        getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(GoogleMap googleMap) {
+                mMap = googleMap;
+                updateUI();
+            }
+        });
     }
 
     @Override
@@ -162,5 +185,33 @@ public class LocatrFragment extends Fragment {
             return;
 
         mViewModel.requestLocation();
+    }
+
+    private void updateUI() {
+        Location location = mViewModel.getMyLocation().getValue();
+        if (location == null || mMap == null || mItemLatLng == null || mItemBitmap == null)
+            return;
+
+        LatLng myLatLng = new LatLng(location.getLatitude(), location.getLongitude());
+        LatLngBounds latLngBounds = new LatLngBounds.Builder()
+                .include(myLatLng)
+                .include(mItemLatLng)
+                .build();
+
+        MarkerOptions myMarkerOptions = new MarkerOptions()
+                .position(myLatLng)
+                .title("My Location");
+
+        MarkerOptions itemMarkerOptions = new MarkerOptions()
+                .position(mItemLatLng)
+                .icon(BitmapDescriptorFactory.fromBitmap(mItemBitmap))
+                .title("Nearest Picture");
+
+        mMap.addMarker(myMarkerOptions);
+        mMap.addMarker(itemMarkerOptions);
+
+        int margin = getResources().getDimensionPixelSize(R.dimen.map_inset_margin);
+        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(latLngBounds, margin);
+        mMap.animateCamera(cameraUpdate);
     }
 }
