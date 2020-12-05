@@ -11,6 +11,8 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.os.Looper;
 import android.util.Log;
@@ -20,25 +22,30 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.squareup.picasso.Picasso;
 
 import org.maktab.photogallery.R;
+import org.maktab.photogallery.data.model.GalleryItem;
 import org.maktab.photogallery.databinding.FragmentLocatrBinding;
+import org.maktab.photogallery.viewmodel.LocatrViewModel;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class LocatrFragment extends Fragment {
 
-    private static final String TAG = "LocatrFragment";
+    public static final String TAG = "LocatrFragment";
     private static final int REQUEST_CODE_PERMISSION_LOCATION = 0;
-    private FragmentLocatrBinding mBinding;
 
-    private FusedLocationProviderClient mFusedLocationClient;
+    private FragmentLocatrBinding mBinding;
+    private LocatrViewModel mViewModel;
 
     public LocatrFragment() {
         // Required empty public constructor
@@ -56,7 +63,19 @@ public class LocatrFragment extends Fragment {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
 
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
+        mViewModel = new ViewModelProvider(this).get(LocatrViewModel.class);
+        mViewModel.getSearchItemsLiveData().observe(this, new Observer<List<GalleryItem>>() {
+            @Override
+            public void onChanged(List<GalleryItem> galleryItems) {
+                if (galleryItems == null || galleryItems.size() == 0)
+                    return;
+
+                Picasso.get()
+                        .load(galleryItems.get(0).getUrl())
+                        .placeholder(R.mipmap.ic_android_placeholder)
+                        .into(mBinding.imageView);
+            }
+        });
     }
 
     @Override
@@ -107,6 +126,11 @@ public class LocatrFragment extends Fragment {
 
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
                     requestLocation();
+                else
+                    Toast.makeText(
+                            getContext(),
+                            "We do not have the location permission",
+                            Toast.LENGTH_LONG).show();
 
                     return;
         }
@@ -137,23 +161,6 @@ public class LocatrFragment extends Fragment {
         if (!hasLocationAccess())
             return;
 
-        LocationRequest locationRequest = LocationRequest.create();
-        locationRequest.setNumUpdates(1);
-        locationRequest.setInterval(0);
-        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-
-        LocationCallback locationCallback = new LocationCallback() {
-            @Override
-            public void onLocationResult(LocationResult locationResult) {
-                Location location = locationResult.getLocations().get(0);
-                Log.d(TAG,
-                        "lat: " + location.getLatitude() + ", lon: " + location.getLongitude());
-            }
-        };
-
-        mFusedLocationClient.requestLocationUpdates(
-                locationRequest,
-                locationCallback,
-                Looper.getMainLooper());
+        mViewModel.requestLocation();
     }
 }

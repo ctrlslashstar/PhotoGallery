@@ -1,5 +1,6 @@
 package org.maktab.photogallery.data.remote;
 
+import android.location.Location;
 import android.net.Uri;
 
 import org.maktab.photogallery.data.model.GalleryItem;
@@ -36,6 +37,16 @@ public class NetworkParams {
         searchOptions.putAll(BASE_OPTIONS);
         searchOptions.put("method", METHOD_SEARCH);
         searchOptions.put("text", query);
+
+        return searchOptions;
+    }
+
+    public static Map<String, String> getSearchOptions(Location location) {
+        Map<String, String> searchOptions = new HashMap<>();
+        searchOptions.putAll(BASE_OPTIONS);
+        searchOptions.put("method", METHOD_SEARCH);
+        searchOptions.put("lat", String.valueOf(location.getLatitude()));
+        searchOptions.put("lon", String.valueOf(location.getLongitude()));
 
         return searchOptions;
     }

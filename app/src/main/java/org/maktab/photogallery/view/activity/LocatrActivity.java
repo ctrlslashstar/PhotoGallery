@@ -33,14 +33,16 @@ public class LocatrActivity extends SingleFragmentActivity {
         GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
         int errorCode = apiAvailability.isGooglePlayServicesAvailable(this);
         if (errorCode != ConnectionResult.SUCCESS) {
-            Dialog errorDialog = apiAvailability.getErrorDialog(this, errorCode, REQUEST_ERROR,
+            //using correct alert dialog.
+
+            /*Dialog errorDialog = apiAvailability.getErrorDialog(this, errorCode, REQUEST_ERROR,
                     new DialogInterface.OnCancelListener() {
                         @Override
                         public void onCancel(DialogInterface dialog) {
                             finish();
                         }
                     });
-            errorDialog.show();
+            errorDialog.show();*/
         }
     }
 

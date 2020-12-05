@@ -1,5 +1,6 @@
 package org.maktab.photogallery.data.repository;
 
+import android.location.Location;
 import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
@@ -90,7 +91,18 @@ public class PhotoRepository {
         Call<List<GalleryItem>> call =
                 mFlickrService.listItems(NetworkParams.getSearchOptions(query));
 
-        call.enqueue(new Callback<List<GalleryItem>>() {
+        call.enqueue(getSearchCallback());
+    }
+
+    public void fetchSearchItemsAsync(Location location) {
+        Call<List<GalleryItem>> call =
+                mFlickrService.listItems(NetworkParams.getSearchOptions(location));
+
+        call.enqueue(getSearchCallback());
+    }
+
+    private Callback getSearchCallback() {
+        return new Callback<List<GalleryItem>>() {
 
             //this run on main thread
             @Override
@@ -106,6 +118,6 @@ public class PhotoRepository {
             public void onFailure(Call<List<GalleryItem>> call, Throwable t) {
                 Log.e(TAG, t.getMessage(), t);
             }
-        });
+        };
     }
 }
