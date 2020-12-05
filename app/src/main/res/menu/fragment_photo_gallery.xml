@@ -11,11 +11,15 @@
         app:actionViewClass="android.widget.SearchView"
         app:showAsAction="ifRoom" />
     <item
-        android:id="@+id/menu_item_clear"
-        android:title="@string/menu_item_clear"
-        app:showAsAction="never" />
-    <item
         android:id="@+id/menu_item_poll_toggling"
         android:title="@string/start_polling"
         app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/menu_item_locatr"
+        android:title="@string/menu_item_locatr"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/menu_item_clear"
+        android:title="@string/menu_item_clear"
+        app:showAsAction="never" />
 </menu>

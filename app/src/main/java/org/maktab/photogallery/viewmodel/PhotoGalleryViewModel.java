@@ -13,6 +13,7 @@ import org.maktab.photogallery.data.model.GalleryItem;
 import org.maktab.photogallery.data.remote.NetworkParams;
 import org.maktab.photogallery.data.repository.PhotoRepository;
 import org.maktab.photogallery.utilities.QueryPreferences;
+import org.maktab.photogallery.view.activity.LocatrActivity;
 import org.maktab.photogallery.view.activity.PhotoPageActivity;
 import org.maktab.photogallery.work.PollWorker;
 
@@ -85,6 +86,12 @@ public class PhotoGalleryViewModel extends AndroidViewModel {
 
     public boolean isTaskScheduled() {
         return PollWorker.isWorkEnqueued(getApplication());
+    }
+
+    public void startLocatr() {
+        Intent intent = LocatrActivity.newIntent(getApplication());
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        getApplication().startActivity(intent);
     }
 
     public void onImageClicked(int position) {

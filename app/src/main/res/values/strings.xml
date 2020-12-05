@@ -13,5 +13,7 @@
     <string name="channel_id">flicker_channel_id</string>
     <string name="channel_name">Flickr Channel</string>
     <string name="channel_description">This is notification channel for flickr</string>
+    <string name="menu_item_locatr">Locatr</string>
+    <string name="menu_item_location">Location</string>
 
 </resources>
